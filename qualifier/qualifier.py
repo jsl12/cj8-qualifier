@@ -23,20 +23,16 @@ def make_table(rows: List[List[Any]], labels: Optional[List[Any]] = None, center
     :return: A table representing the rows passed in.
     """
     col_widths = column_widths(rows, labels)
-    num_cols = len(rows[0])
-    res = Table.top_left + Table.top_mid.join(
-        (Table.mid_hor * (col_widths[i] + 2)) for i in range(num_cols)) + Table.top_right + '\n'
+    res = create_top(col_widths)
 
     if labels is not None:
         res += create_row(labels, col_widths, centered)
-        res += Table.mid_left + Table.middle.join(
-            (Table.mid_hor * (col_widths[i] + 2)) for i in range(num_cols)) + Table.mid_right + '\n'
+        res += create_middle(col_widths)
 
     for row in rows:
         res += create_row(row, col_widths, centered)
 
-    res += Table.bottom_left + Table.bottom_mid.join(
-        (Table.mid_hor * (col_widths[i] + 2)) for i in range(num_cols)) + Table.bottom_right + '\n'
+    res += create_bottom(col_widths)
 
     return res
 
@@ -55,3 +51,33 @@ def create_row(row: List[Any], col_widths: List[int], centered: bool = False) ->
     return Table.mid_vert + \
            Table.mid_vert.join(convert(data, width) for data, width in zip(row, col_widths)) + \
            Table.mid_vert + '\n'
+
+def create_line(start_char: str, fill: str, delim: str, end_char: str, col_widths: List[int]) -> str:
+    return start_char + delim.join((fill * (col_widths[i] + 2)) for i in range(len(col_widths))) + end_char + '\n'
+
+def create_top(col_widths):
+    return create_line(
+        start_char=Table.top_left,
+        fill=Table.mid_hor,
+        delim=Table.top_mid,
+        end_char=Table.top_right,
+        col_widths=col_widths
+    )
+
+def create_middle(col_widths):
+    return create_line(
+        start_char=Table.mid_left,
+        fill=Table.mid_hor,
+        delim=Table.middle,
+        end_char=Table.mid_right,
+        col_widths=col_widths
+    )
+
+def create_bottom(col_widths):
+    return create_line(
+        start_char=Table.bottom_left,
+        fill=Table.mid_hor,
+        delim=Table.bottom_mid,
+        end_char=Table.bottom_right,
+        col_widths=col_widths
+    )
