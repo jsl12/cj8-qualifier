@@ -45,8 +45,8 @@ def column_widths(rows: List[List[Any]], labels: Optional[List[Any]] = None) -> 
     if labels is not None:
         res.append(labels)
     col_widths = [
-        max(len(str(row[i])) for row in rows)
-        for i in range(len(rows[0]))
+        max(len(str(row[i])) for row in res)
+        for i in range(len(res[0]))
     ]
     return col_widths
 
